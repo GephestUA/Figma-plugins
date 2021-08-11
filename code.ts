@@ -24,11 +24,12 @@ figma.ui.onmessage = async (msg) => {
     const randomMaxValue = maxValue;
     const randomMinValue = minValue;
 
-    maxValue = Number.isInteger(maxValue / step) ? maxValue : step * numberOfLabel;
+    maxValue = Number.isInteger(maxValue / step) ? maxValue : step * Math.ceil(maxValue / step);
 
     const baseRect = figma.createRectangle();
-    baseRect.resize(chartWidth, maxValue);
-    baseRect.opacity = 0.1;
+    baseRect.resize(chartWidth, maxValue + minusMinValue);
+    baseRect.y = -maxValue;
+    baseRect.opacity = 0.2;
     baseRect.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 0.2 } }];
 
     const group = figma.group([baseRect], figma.currentPage);
@@ -39,35 +40,38 @@ figma.ui.onmessage = async (msg) => {
       const rectHight = getRandomInt(randomMinValue, randomMaxValue);
 
       rect.resize(columnWidth, Math.abs(rectHight));
-      rect.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
+      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.2, b: 0.5 } }];
       rect.x = i * (columnWidth + 50) + 50 / 2;
-      Math.sign(rectHight) === -1 ? (rect.y = maxValue) : (rect.y = maxValue - rectHight);
+
+      Math.sign(rectHight) === -1 ? (rect.y = 0) : (rect.y = -rectHight);
 
       group.appendChild(rect);
     }
 
     let label = 0;
     let horizontalGrids = 0;
-    let verticalGrids = 0;
 
+    // Create Label Y and horizontal grid
     for (let i = 0; i <= numberOfLabel; i++) {
       // Create Label Y
       const labels = figma.createText();
       if (i === 0) {
+        // Create Label Y
         label = -minusMinValue;
-        labels.y = maxValue + Math.abs(minValue);
         // Create horizontal grid
-        horizontalGrids += 0;
+        horizontalGrids = -maxValue;
       } else {
         label += step;
+        // Create horizontal grid
         horizontalGrids += step;
       }
       // Create Label Y
       labels.characters = String(label);
       labels.x = String(maxValue).length * -8;
-      labels.y = maxValue - Number(label) - 7;
+      labels.y = Number(-label) - 7;
       labels.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
       labels.fontSize = 10;
+      labels.textAutoResize = 'WIDTH_AND_HEIGHT';
       group.appendChild(labels);
 
       // Create horizontal grid
@@ -76,13 +80,14 @@ figma.ui.onmessage = async (msg) => {
       horizontalGrid.y = horizontalGrids;
       group.appendChild(horizontalGrid);
     }
-
+    // Create vertical grid
+    let verticalGrids = 0;
     for (let i = 0; i < countColumns + 1; i++) {
-      // Create vertical grid
       const verticalGrid = figma.createRectangle();
       verticalGrid.name = 'verticalGrid';
       verticalGrid.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
-      verticalGrid.resize(1, maxValue);
+      verticalGrid.resize(1, maxValue + minusMinValue);
+      verticalGrid.y += -maxValue;
       if (i === 0) {
         verticalGrid.x = verticalGrids;
       } else {
