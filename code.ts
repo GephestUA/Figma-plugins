@@ -14,6 +14,7 @@ figma.ui.onmessage = async (msg) => {
     let chartWidth = columnWidth * countColumns + 50 * countColumns;
     const step = String(maxValue).length === 3 ? 50 : 100;
     const numberOfLabel = Math.ceil(maxValue / step);
+    const randomMaxValue = maxValue;
 
     maxValue = Number.isInteger(maxValue / step) ? maxValue : step * numberOfLabel;
 
@@ -27,7 +28,7 @@ figma.ui.onmessage = async (msg) => {
     // Create Bar
     for (let i = 0; i < countColumns; i++) {
       let rect = figma.createRectangle();
-      const rectHight = getRandomInt(minValue, maxValue);
+      const rectHight = getRandomInt(minValue, randomMaxValue);
       console.log(rectHight);
 
       rect.resize(columnWidth, rectHight);
@@ -85,4 +86,6 @@ figma.ui.onmessage = async (msg) => {
       group.appendChild(verticalGrid);
     }
   }
+
+  figma.closePlugin();
 };

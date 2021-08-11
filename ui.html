@@ -3,10 +3,10 @@
 <button id="create">Create</button>
 <button id="cancel">Cancel</button>
 <script>
-  let countColumns = 15;
+  let countColumns = 5;
   let minValue = 0;
-  let maxValue = 540;
-  let columnWidth = 20;
+  let maxValue = 210;
+  let columnWidth = 15;
 
   document.getElementById('create').onclick = () => {
     parent.postMessage({ pluginMessage: { countColumns, minValue, maxValue, columnWidth, type: 'BarChart' } }, '*');
