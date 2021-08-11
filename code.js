@@ -19,23 +19,28 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         let { countColumns, minValue, maxValue, columnWidth } = msg;
         let chartWidth = columnWidth * countColumns + 50 * countColumns;
         const step = String(maxValue).length === 3 ? 50 : 100;
-        const numberOfLabel = Math.ceil(maxValue / step);
+        const minusMinValue = minValue < 0
+            ? Number.isInteger(minValue / step)
+                ? Math.abs(minValue)
+                : step * Math.ceil(Math.abs(minValue) / step)
+            : 0;
+        const numberOfLabel = Math.ceil((maxValue + minusMinValue) / step);
         const randomMaxValue = maxValue;
+        const randomMinValue = minValue;
         maxValue = Number.isInteger(maxValue / step) ? maxValue : step * numberOfLabel;
         const baseRect = figma.createRectangle();
         baseRect.resize(chartWidth, maxValue);
-        baseRect.opacity = 0.2;
+        baseRect.opacity = 0.1;
         baseRect.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 0.2 } }];
         const group = figma.group([baseRect], figma.currentPage);
         // Create Bar
         for (let i = 0; i < countColumns; i++) {
             let rect = figma.createRectangle();
-            const rectHight = getRandomInt(minValue, randomMaxValue);
-            console.log(rectHight);
-            rect.resize(columnWidth, rectHight);
+            const rectHight = getRandomInt(randomMinValue, randomMaxValue);
+            rect.resize(columnWidth, Math.abs(rectHight));
             rect.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
             rect.x = i * (columnWidth + 50) + 50 / 2;
-            rect.y = maxValue - rectHight;
+            Math.sign(rectHight) === -1 ? (rect.y = maxValue) : (rect.y = maxValue - rectHight);
             group.appendChild(rect);
         }
         let label = 0;
@@ -45,8 +50,8 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
             // Create Label Y
             const labels = figma.createText();
             if (i === 0) {
-                labels.y = group.y + maxValue - Number(label);
-                label = 0;
+                label = -minusMinValue;
+                labels.y = maxValue + Math.abs(minValue);
                 // Create horizontal grid
                 horizontalGrids += 0;
             }
@@ -57,7 +62,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
             // Create Label Y
             labels.characters = String(label);
             labels.x = String(maxValue).length * -8;
-            labels.y = group.y + maxValue - Number(label) - 5;
+            labels.y = maxValue - Number(label) - 7;
             labels.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
             labels.fontSize = 10;
             group.appendChild(labels);
