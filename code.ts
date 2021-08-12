@@ -6,6 +6,10 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function isOdd(num) {
+  return num % 2;
+}
+
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'BarChart') {
     await figma.loadFontAsync({ family: 'Roboto', style: 'Regular' });
@@ -14,6 +18,9 @@ figma.ui.onmessage = async (msg) => {
     let chartWidth = columnWidth * countColumns + 50 * countColumns;
     const step = String(maxValue).length === 3 ? 20 : 100;
 
+    let chartCount = 3;
+
+    columnWidth = columnWidth / chartCount;
     const minusMinValue =
       minValue < 0
         ? Number.isInteger(minValue / step)
@@ -35,18 +42,30 @@ figma.ui.onmessage = async (msg) => {
     const group = figma.group([baseRect], figma.currentPage);
 
     // Create Bar
-    for (let i = 0; i < countColumns; i++) {
-      let rect = figma.createRectangle();
-      const rectHight = getRandomInt(randomMinValue, randomMaxValue);
 
-      rect.resize(columnWidth, Math.abs(rectHight));
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.68, b: 0.75 } }];
-      rect.x = i * (columnWidth + 50) + 50 / 2;
+    const qwe = new Array(chartCount);
+    qwe.fill(1, 0, chartCount);
 
-      Math.sign(rectHight) === -1 ? (rect.y = 1) : (rect.y = -rectHight);
+    let rightDirection = 50 / 2;
+    let leftDirection = 50 / 2;
+    qwe.forEach((_, index) => {
+      for (let i = 0; i < countColumns; i++) {
+        let rect = figma.createRectangle();
+        const rectHight = getRandomInt(randomMinValue, randomMaxValue);
 
-      group.appendChild(rect);
-    }
+        rect.resize(columnWidth, Math.abs(rectHight));
+        if (index === 0) {
+          rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.68, b: 0.75 } }];
+        } else {
+          rect.fills = [{ type: 'SOLID', color: { r: Math.random(), g: Math.random(), b: Math.random() } }];
+        }
+        rect.x = i * (columnWidth * chartCount + 50) + (50 / 2 + columnWidth * index);
+
+        Math.sign(rectHight) === -1 ? (rect.y = 0.5) : (rect.y = -rectHight);
+
+        group.appendChild(rect);
+      }
+    });
 
     let label = 0;
     let horizontalGrids = 0;
@@ -77,7 +96,7 @@ figma.ui.onmessage = async (msg) => {
 
       // Create horizontal grid
       const horizontalGrid = figma.createRectangle();
-      horizontalGrid.resize(chartWidth + 3, 1);
+      horizontalGrid.resizeWithoutConstraints(chartWidth + 3, 0.5);
       horizontalGrid.fills = [{ type: 'SOLID', color: { r: 0.49, g: 0.49, b: 0.49 } }];
       horizontalGrid.opacity = 0.3;
       horizontalGrid.y = horizontalGrids;
@@ -91,16 +110,18 @@ figma.ui.onmessage = async (msg) => {
       verticalGrid.name = 'verticalGrid';
       verticalGrid.fills = [{ type: 'SOLID', color: { r: 0.49, g: 0.49, b: 0.49 } }];
       verticalGrid.opacity = 0.3;
-      verticalGrid.resize(1, maxValue + minusMinValue);
+      verticalGrid.resizeWithoutConstraints(0.5, maxValue + minusMinValue);
       verticalGrid.y += -maxValue;
       if (i === 0) {
         verticalGrid.x = verticalGrids;
       } else {
-        verticalGrids += columnWidth + 50;
+        verticalGrids += columnWidth * chartCount + 50;
         verticalGrid.x = verticalGrids;
       }
 
       group.appendChild(verticalGrid);
     }
   }
+
+  figma.closePlugin();
 };
