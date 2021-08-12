@@ -1,4 +1,4 @@
-figma.showUI(__html__);
+figma.showUI(__html__, { width: 300, height: 300 });
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -12,7 +12,7 @@ figma.ui.onmessage = async (msg) => {
 
     let { countColumns, minValue, maxValue, columnWidth } = msg;
     let chartWidth = columnWidth * countColumns + 50 * countColumns;
-    const step = String(maxValue).length === 3 ? 50 : 100;
+    const step = String(maxValue).length === 3 ? 20 : 100;
 
     const minusMinValue =
       minValue < 0
@@ -29,7 +29,7 @@ figma.ui.onmessage = async (msg) => {
     const baseRect = figma.createRectangle();
     baseRect.resize(chartWidth, maxValue + minusMinValue);
     baseRect.y = -maxValue;
-    baseRect.opacity = 0.2;
+    baseRect.opacity = 0;
     baseRect.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 0.2 } }];
 
     const group = figma.group([baseRect], figma.currentPage);
@@ -40,10 +40,10 @@ figma.ui.onmessage = async (msg) => {
       const rectHight = getRandomInt(randomMinValue, randomMaxValue);
 
       rect.resize(columnWidth, Math.abs(rectHight));
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.2, b: 0.5 } }];
+      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.68, b: 0.75 } }];
       rect.x = i * (columnWidth + 50) + 50 / 2;
 
-      Math.sign(rectHight) === -1 ? (rect.y = 0) : (rect.y = -rectHight);
+      Math.sign(rectHight) === -1 ? (rect.y = 1) : (rect.y = -rectHight);
 
       group.appendChild(rect);
     }
@@ -67,17 +67,21 @@ figma.ui.onmessage = async (msg) => {
       }
       // Create Label Y
       labels.characters = String(label);
-      labels.x = String(maxValue).length * -8;
-      labels.y = Number(-label) - 7;
-      labels.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
-      labels.fontSize = 10;
-      labels.textAutoResize = 'WIDTH_AND_HEIGHT';
+      labels.x = String(maxValue).length * -10;
+      labels.y = Number(-label) - 4;
+      labels.fills = [{ type: 'SOLID', color: { r: 0.49, g: 0.49, b: 0.49 } }];
+      labels.fontSize = 8;
+      labels.resize(20, 10);
+      labels.textAlignHorizontal = 'RIGHT';
       group.appendChild(labels);
 
       // Create horizontal grid
-      const horizontalGrid = figma.createLine();
-      horizontalGrid.resize(chartWidth, 0);
+      const horizontalGrid = figma.createRectangle();
+      horizontalGrid.resize(chartWidth + 3, 1);
+      horizontalGrid.fills = [{ type: 'SOLID', color: { r: 0.49, g: 0.49, b: 0.49 } }];
+      horizontalGrid.opacity = 0.3;
       horizontalGrid.y = horizontalGrids;
+      horizontalGrid.x = -3;
       group.appendChild(horizontalGrid);
     }
     // Create vertical grid
@@ -85,7 +89,8 @@ figma.ui.onmessage = async (msg) => {
     for (let i = 0; i < countColumns + 1; i++) {
       const verticalGrid = figma.createRectangle();
       verticalGrid.name = 'verticalGrid';
-      verticalGrid.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
+      verticalGrid.fills = [{ type: 'SOLID', color: { r: 0.49, g: 0.49, b: 0.49 } }];
+      verticalGrid.opacity = 0.3;
       verticalGrid.resize(1, maxValue + minusMinValue);
       verticalGrid.y += -maxValue;
       if (i === 0) {
@@ -98,6 +103,4 @@ figma.ui.onmessage = async (msg) => {
       group.appendChild(verticalGrid);
     }
   }
-
-  figma.closePlugin();
 };

@@ -1,14 +1,22 @@
 <h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5" /></p>
+<p>countColumns: <input id="countColumns" value="5" /></p>
+<p>minValue: <input id="minValue" value="-100" /></p>
+<p>maxValue: <input id="maxValue" value="100" /></p>
+<p>columnWidth: <input id="columnWidth" value="15" /></p>
 <button id="create">Create</button>
 <button id="cancel">Cancel</button>
 <script>
-  let countColumns = 10;
-  let minValue = 0;
-  let maxValue = 200;
-  let columnWidth = 25;
+  // let countColumns = 10;
+  // let minValue = 0;
+  // let maxValue = 200;
+  // let columnWidth = 25;
 
   document.getElementById('create').onclick = () => {
+    const countColumns = Number(document.getElementById('countColumns').value);
+    const minValue = Number(document.getElementById('minValue').value);
+    const maxValue = Number(document.getElementById('maxValue').value);
+    const columnWidth = Number(document.getElementById('columnWidth').value);
+
     parent.postMessage({ pluginMessage: { countColumns, minValue, maxValue, columnWidth, type: 'BarChart' } }, '*');
   };
 
