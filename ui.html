@@ -3,6 +3,7 @@
 <p>minValue: <input id="minValue" value="-110" /></p>
 <p>maxValue: <input id="maxValue" value="110" /></p>
 <p>columnWidth: <input id="columnWidth" value="100" /></p>
+<p>chartCount: <input id="chartCount" value="2" /></p>
 <button id="create">Create</button>
 <button id="cancel">Cancel</button>
 <script>
@@ -16,8 +17,12 @@
     const minValue = Number(document.getElementById('minValue').value);
     const maxValue = Number(document.getElementById('maxValue').value);
     const columnWidth = Number(document.getElementById('columnWidth').value);
+    const chartCount = Number(document.getElementById('chartCount').value);
 
-    parent.postMessage({ pluginMessage: { countColumns, minValue, maxValue, columnWidth, type: 'BarChart' } }, '*');
+    parent.postMessage(
+      { pluginMessage: { countColumns, minValue, maxValue, columnWidth, chartCount, type: 'BarChart' } },
+      '*'
+    );
   };
 
   document.getElementById('cancel').onclick = () => {
