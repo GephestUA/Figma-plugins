@@ -41,6 +41,8 @@ figma.ui.onmessage = async (msg) => {
     iterateChart.fill(1, 0, chartCount);
 
     iterateChart.forEach((_, index) => {
+      let randomColors = { r: Math.random(), g: Math.random(), b: Math.random() };
+
       for (let i = 0; i < countColumns; i++) {
         let rect = figma.createRectangle();
         const rectHight = getRandomInt(randomMinValue, randomMaxValue);
@@ -57,8 +59,9 @@ figma.ui.onmessage = async (msg) => {
             blendMode: 'NORMAL',
           },
         ];
+
         rect.strokes = rect.strokes.concat(chartStrokeStyles);
-        rect.fills = [{ type: 'SOLID', color: { r: Math.random(), g: Math.random(), b: Math.random() } }];
+        rect.fills = [{ type: 'SOLID', color: randomColors }];
 
         rect.x = i * (columnWidth * chartCount + 50) + (50 / 2 + columnWidth * index) + index / 2;
 

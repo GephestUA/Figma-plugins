@@ -39,6 +39,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         const iterateChart = new Array(chartCount);
         iterateChart.fill(1, 0, chartCount);
         iterateChart.forEach((_, index) => {
+            let randomColors = { r: Math.random(), g: Math.random(), b: Math.random() };
             for (let i = 0; i < countColumns; i++) {
                 let rect = figma.createRectangle();
                 const rectHight = getRandomInt(randomMinValue, randomMaxValue);
@@ -55,7 +56,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
                     },
                 ];
                 rect.strokes = rect.strokes.concat(chartStrokeStyles);
-                rect.fills = [{ type: 'SOLID', color: { r: Math.random(), g: Math.random(), b: Math.random() } }];
+                rect.fills = [{ type: 'SOLID', color: randomColors }];
                 rect.x = i * (columnWidth * chartCount + 50) + (50 / 2 + columnWidth * index) + index / 2;
                 Math.sign(rectHight) === -1 ? (rect.y = 0.5) : (rect.y = -rectHight);
                 group.appendChild(rect);
